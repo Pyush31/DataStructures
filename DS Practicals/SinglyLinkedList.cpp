@@ -1,7 +1,6 @@
 //Q. 10. Implementation Linked List using templates. Include functions for insertion, deletion and search of a number,
 //       reverse the list and concatenate two linked lists (include a function and also overload operator +).
 #include<iostream>
-#include<stdlib.h>
 #include<iomanip>
 
 using namespace std;
@@ -11,7 +10,7 @@ template< typename T >
 class Node
 {
 public:
-    T data;
+    int data;
     Node *next;
 
     Node ( T data =0, Node *next=0)
@@ -259,7 +258,7 @@ template < typename T >
 
 void SinglyLinkedlist<T> :: traverse()
 {
-    if (head == 0)\
+    if (head == 0)
     {
         cout<<"\n List is Empty ";
     }
@@ -398,7 +397,7 @@ int main()
                     break;
             case 6 : S->del_at_loc();
                     break;
-            case 7 : S->inverted();
+            case 7 : S->inverted(); S->traverse();
                     break;
             case 8 : S->locate();
                     break;
