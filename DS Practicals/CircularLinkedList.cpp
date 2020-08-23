@@ -1,4 +1,5 @@
-// Q.11. Implement Doubly Linked List using templates. Include functions for insertion, deletion and search of a number, reverse the list.
+// Q.12.	Implement Circular Linked List using templates. Include functions for insertion, deletion and search of a number, reverse the list.
+
 #include<iostream>
 #include<iomanip>
 
@@ -10,13 +11,12 @@ class Node
 {
 public:
     int data;
-    Node *next, *prev ;
+    Node *next;
 
-    Node ( T data =0, Node *next = 0, Node *prev = 0)
+    Node ( T data =0, Node *next=0)
     {
         this->data = data;
         this->next = next;
-        this->prev = prev;
     }
     ~Node()
     {
@@ -26,24 +26,24 @@ public:
 
 template < typename T >
 
-class DoublyLinkedList
+class CircularLinkedList
 {
 private:
-    Node<T> *head,*tail,*temp;
+    Node<T> *head,*temp;
     int No_nodes;
 
 public:
-    DoublyLinkedList()
+    CircularLinkedList()
     {
-        head = tail = temp = 0;
+        head = temp = 0;
         No_nodes = 0;
     }
-    ~DoublyLinkedList()
+    ~CircularLinkedList()
     {
         temp = head;
         Node<T> * nextptr;
         cout<<"\n Destroying the Linked List";
-        while(temp != 0)
+        while(temp->next != head)
         {
             nextptr = temp->next;
             delete temp;
@@ -60,67 +60,68 @@ public:
     void traverse();//to display the list
     void locate(); //to search
     void inverted(); //to reverse the list
-    int  total_no_nodes();// to count no of nodes
-    void operator + (DoublyLinkedList &s);//to concatenate using operator overloading
 
 };
 
 template < typename T >
 
-int DoublyLinkedList<T> :: total_no_nodes()
-{
-    if(No_nodes==0)
-        return 0;
-    else return No_nodes;
-}
-
-template < typename T >
-
-void DoublyLinkedList<T> :: ins_at_start()
+void CircularLinkedList<T> :: ins_at_start()
 {
     //creating new object for node
     temp = new Node<T>();
     cout<<"\n Enter the data of new node ";
     cin>>temp->data;
-    temp->next = 0;
-    if(head !=0)
+    if(head ==0)
     {
-        head->prev = temp;
-        temp->next = head;
         head = temp;
+        head->next = head;
+        temp = 0;
     }
     else
     {
-        head = tail = temp;
+        Node<T>* tail = head;
+        while(tail->next != head)
+        {
+            tail = tail->next;
+        }
+        temp->next = head;
+        head = tail;
+        tail->next = head;
+        temp = tail = 0;
     }
-    temp = 0;
     No_nodes++;
 }
 
 template < typename T >
 
-void DoublyLinkedList<T> :: ins_at_end()
+void CircularLinkedList<T> :: ins_at_end()
 {
     temp = new Node<T>();
     cout<<"\n Enter the data of new node ";
     cin>>temp->data;
-    if(head !=0)
+    if(head ==0)
     {
-        tail->next = temp;
-        temp->prev = tail;
-        tail = temp;
+        head = temp;
+        head->next = head;
+        temp = 0;
     }
     else
     {
-        head = tail = temp;
+        Node<T>* tail = head;
+        while(tail->next != head)
+        {
+            tail = tail->next;
+        }
+        tail->next = temp;
+        tail->next->next = head;
+        temp = tail = 0;
     }
-    temp = 0;
     No_nodes++;
 }
 
 template < typename T >
 
-void DoublyLinkedList<T> :: ins_at_loc()
+void CircularLinkedList<T> :: ins_at_loc()
 {
     //taking location input
     int loc;
@@ -129,15 +130,22 @@ void DoublyLinkedList<T> :: ins_at_loc()
     temp = new Node<T>();
     cout<<"\n Enter the data of new node ";
     cin>>temp->data;
+    temp->next = 0;
     if(loc < 0 || loc > No_nodes)
     {
         cout<<"\n Location not valid ";
     }
     else if(loc==1)
     {
-        head->prev = temp;
+        Node<T>* tail = head;
+        while(tail->next = 0)
+        {
+            tail = tail->next;
+        }
         temp->next = head;
         head = temp;
+        tail->next = head;
+        tail = temp = 0;
         No_nodes++;
     }
     else
@@ -152,25 +160,37 @@ void DoublyLinkedList<T> :: ins_at_loc()
         }
         //connecting given location with temp in list
         temp->next = reqNode->next;
-        temp->prev = reqNode;
-        reqNode->next->prev = temp;
         reqNode->next = temp;
+        reqNode = temp = 0;
         No_nodes++;
     }
-    temp = 0;
 }
 
 template < typename T >
 
-void DoublyLinkedList<T> :: del_at_start()
+void CircularLinkedList<T> :: del_at_start()
 {
     if(No_nodes > 0)
     {
-        temp = head;
-        head = head->next;
-        head->prev = 0;
-        delete temp;
-        temp =0;
+        if(head->next == head)
+        {
+            temp = head;
+            delete temp;
+            head = temp = 0;
+        }
+        else
+        {
+            Node<T>* tail = head;
+            while(tail->next != head)
+            {
+                tail = tail->next;
+            }
+            temp = head;
+            head = head->next;
+            tail->next = head;
+            delete temp;
+            temp =0;
+        }
         No_nodes--;
     }
     else cout<<"\n Nothing to delete ";
@@ -178,24 +198,28 @@ void DoublyLinkedList<T> :: del_at_start()
 
 template < typename T >
 
-void DoublyLinkedList<T> :: del_at_end()
+void CircularLinkedList<T> :: del_at_end()
 {
     if(No_nodes > 0)
     {
-        if(head == tail)
+        if(head->next == head)
         {
-            delete head;
-            head = tail = temp = 0;
-            No_nodes--;
+            temp = head;
+            delete temp;
+            head = temp = 0;
         }
         else
         {
-            temp = tail;
-            tail = tail->prev;
-            tail->next = 0;
+            temp = head;
+            while(temp->next->next != head)
+            {
+                temp = temp->next;
+            }
+            delete temp->next;
+            temp->next = head;
             temp = 0;
-            No_nodes--;
         }
+        No_nodes--;
     }
     else
     {
@@ -205,7 +229,7 @@ void DoublyLinkedList<T> :: del_at_end()
 
 template < typename T >
 
-void DoublyLinkedList<T>:: del_at_loc()
+void CircularLinkedList<T>:: del_at_loc()
 {
     int loc;
     //taking location input
@@ -218,47 +242,48 @@ void DoublyLinkedList<T>:: del_at_loc()
     else if (loc == 1)
     {
         temp = head;
+        Node<T>* tail = head;
+        while(tail->next != head)
+        {
+            tail = tail->next;
+        }
         if(No_nodes == 1)
         {
-            head = tail =0;
+            head =0;
         }
         else
         {
             head = head->next;
-            head->prev = 0;
+            tail->next = head;
         }
         delete temp;
-        temp = 0;
         No_nodes--;
     }
     else
     {
         int pointer = 1;
-        temp = head;
-        while(pointer != loc)
+        Node<T> *reqNode = head;
+        // going to the node of given location
+        while( pointer != (loc-1))
         {
-            temp = temp->next;
+            reqNode = reqNode->next;
             pointer++;
         }
-        if (temp == tail)
+        temp = reqNode->next;
+        if(temp->next == head)
         {
-            tail = temp->prev;
-            tail->next = 0;
+            reqNode->next = head;
         }
-        else
-        {
-            temp->prev->next = temp->next;
-            temp->next->prev = temp->prev;
-        }
+        reqNode->next = temp->next;
         delete temp;
-        temp = 0;
+        temp = reqNode = 0;
         No_nodes--;
     }
 }
 
 template < typename T >
 
-void DoublyLinkedList<T> :: traverse()
+void CircularLinkedList<T> :: traverse()
 {
     if (head == 0)
     {
@@ -266,13 +291,12 @@ void DoublyLinkedList<T> :: traverse()
     }
     else
     {
-        cout<<"\n LIST : ";
         temp = head;
-        while(temp != 0)
+        do
         {
             cout<<temp->data<<"  ";
             temp = temp->next;
-        }
+        }while(temp != head);
         cout<<endl;
         temp = 0;
     }
@@ -280,16 +304,16 @@ void DoublyLinkedList<T> :: traverse()
 
 template < typename T >
 
-void DoublyLinkedList<T> :: locate()
+void CircularLinkedList<T> :: locate()
 {
-    if(total_no_nodes() > 0)
+    if(No_nodes > 0)
     {
         int value;
         int pointer = 1;
         cout<<"\n Enter the data you want to search ";
         cin>>value;
         temp = head;
-        while(temp != 0)
+        do
         {
             if (temp->data == value)
             {
@@ -298,7 +322,7 @@ void DoublyLinkedList<T> :: locate()
             }
             temp = temp->next;
             pointer++;
-        }
+        }while(temp != head);
         cout<<"\n Not Found ";
     }
     else
@@ -309,22 +333,22 @@ void DoublyLinkedList<T> :: locate()
 
 template < typename T >
 
-void DoublyLinkedList<T> :: inverted()
+void CircularLinkedList<T> :: inverted()
 {
-    if (total_no_nodes() > 0)
+    if (No_nodes > 0)
     {
         temp = head;
+        Node<T> *prev = 0;
         Node<T> *next2 = 0;
-        while(temp != 0)
+        do
         {
             next2 = temp->next;
-            temp->next = temp->prev;
-            temp->prev = next2;
+            temp->next = prev;
+            prev = temp;
             temp = next2;
-        }
-        temp = tail;
-        tail = head;
-        head = temp;
+        }while(temp != head);
+        head->next = prev;
+        head = prev;
         temp = 0;
     }
     else
@@ -337,14 +361,14 @@ void DoublyLinkedList<T> :: inverted()
 int main()
 {
         system("cls");
-    DoublyLinkedList<int>* D = new DoublyLinkedList<int>();
+    CircularLinkedList<int>* C = new CircularLinkedList<int>();
 
     char ch;
     int a;
     do
     { system("cls");
 
-        cout<<setw(53)<<setfill(' ')<<" DOUBLY LINKED LIST ";
+        cout<<setw(59)<<setfill(' ')<<" LINKED LIST ";
         cout<<setw(149)<<setfill('*')<<endl;
         cout<<"\n 1. Insert at start of list "
             <<"\n 2. Insert at end of list "
@@ -360,23 +384,23 @@ int main()
 
         switch(a)
         {
-            case 1 : D->ins_at_start(); D->traverse();
+            case 1 : C->ins_at_start();
                     break;
-            case 2 : D->ins_at_end(); D->traverse();
+            case 2 : C->ins_at_end();
                     break;
-            case 3 : D->ins_at_loc(); D->traverse();
+            case 3 : C->ins_at_loc();
                     break;
-            case 4 : D->del_at_start(); D->traverse();
+            case 4 : C->del_at_start();
                     break;
-            case 5 : D->del_at_end(); D->traverse();
+            case 5 : C->del_at_end();
                     break;
-            case 6 : D->del_at_loc(); D->traverse();
+            case 6 : C->del_at_loc();
                     break;
-            case 7 : D->inverted(); D->traverse();
+            case 7 : C->inverted(); C->traverse();
                     break;
-            case 8 : D->locate();
+            case 8 : C->locate();
                     break;
-            case 9 : D->traverse();
+            case 9 : C->traverse();
                     break;
             default : cout<<"\n Invalid choice ";
         }
@@ -386,6 +410,6 @@ int main()
                         <<"\n BYE ";
     }
     while(ch=='y');
-    delete D;
+    delete C;
     return 0;
 }
