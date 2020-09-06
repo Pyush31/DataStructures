@@ -95,5 +95,5 @@ int main()
             break;
         }
     } while (ch != 4);
-    
+    return 0;
 }
