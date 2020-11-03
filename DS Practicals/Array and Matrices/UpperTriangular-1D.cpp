@@ -2,33 +2,33 @@
 #include<conio.h>
 using namespace std;
 
-template<typename T>
-class LowerTriangal
+template <typename T>
+class UpperTriangular
 {
 private:
     int size;
-    T *l;
+    T *u;
 public:
-    LowerTriangal(int size)
+    UpperTriangular(int size)
     {
         this->size = size;
-        if (size > 0)
+        if(size > 0)
         {
             size = ((size+1)*size)/2;
-            l = new T[size];
+            u = new T[size];
             for(int i = 0; i < size; i++)
             {
-                l[i] = 0;
+                u[i] = 0;
             }
         }
         else
         {
-            l = 0;
+            u = 0;
         }
     }
-    ~LowerTriangal()
+    ~UpperTriangular()
     {
-        delete[] l;
+        delete[] u;
     }
 
     void print()
@@ -37,30 +37,30 @@ public:
         {
             for(int j = 1; j <= size; j++)
             {
-                if(i >= j)
+                if(i <= j)
                 {
-                    int k = (i*(i-1))/2 + j;
-                    cout<<l[k-1]<<" ";
+                    int k = size - (j*(j-1)/2) + (i-j);
+                    cout<<u[k-1]<<" ";
                 }
                 else
                 {
                     cout<<0<<" ";
                 }
             }
-            cout<<endl;
+            cout<<"\n";
         }
     }
 
-    void insert(int i, int j)
+    void store(int i, int j)
     {
         if((i <= size) && (j <= size))
         {
-            if(i >= j)
+            if(i <= j)
             {
-                T x = 0;
-                cout<<"Enter value : "; cin>>x;    
-                int k = (i*(i-1))/2 + j;
-                l[k-1] = x;
+                T temp = 0;
+                cout<<"Enter value : "; cin>>temp;    
+                int k = size - (j*(j-1)/2) + (i-j);
+                u[k-1] = temp;
             }       
         }
         else
@@ -72,15 +72,15 @@ public:
 
     int retrieve(int i, int j)
     {
-        if(i <= size && j <= size)
+      if(i <= size && j <= size)
         {
-            if(i >= j)
+            if(i <= j)
             { 
-                int k = (i*(i-1))/2 + j; 
-                return l[k-1];
+                int k = size - (j*(j-1)/2) + (i-j); 
+                return u[k-1];
             }
         }
-        return 0;
+        return 0;  
     }
 };
 
@@ -88,9 +88,10 @@ int main()
 {
     int size;
     int ch;
-    cout<<"\n<<<<<< LOWER TRIANGLE >>>>>";
-    cout<<"\n Enter size of matrix "; cin>>size;
-    LowerTriangal<int> *L = new LowerTriangal<int>(size);
+    cout<<"\n <<<<< UPPER TRIANGULAR MATRIX >>>>> ";
+    cout<<"\n Enter size of matrix  ";
+    cin>>size;
+    UpperTriangular<int> *U = new UpperTriangular<int>(size);
     do
     {
         int i = 0;
@@ -104,12 +105,12 @@ int main()
         switch (ch)
         {
         case 1 : cout<<"\n Enter Index "; cin>>i>>j;
-            L->insert(i,j);
+            U->store(i,j);
             break;
         case 2 : cout<<"\n Enter Index "; cin>>i>>j;
-                 L->retrieve(i,j);
+                 U->retrieve(i,j);
             break;
-        case 3 : L->print();
+        case 3 : U->print();
             break;
         default: if(ch != 4) cout<<"\n Invalid choice";
             break;
