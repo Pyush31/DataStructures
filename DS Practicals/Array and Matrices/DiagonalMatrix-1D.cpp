@@ -108,8 +108,9 @@ int main()
             break;
         case 3 : D->print();
             break;
-        default: cout<<"\n Invalid choice";
+        default: if(ch != 4) cout<<"\n Invalid choice";
             break;
         }
     } while (ch != 4);
+    return 0;
 }
